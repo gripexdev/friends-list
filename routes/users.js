@@ -58,8 +58,39 @@ router.post("/",(req,res)=>{
 
 // PUT request: Update the details of a user by email ID
 router.put("/:email", (req, res) => {
-  // Copy the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+  // Extract email parameter and find users with matching email
+  const email = req.params.email;
+  let filtered_users = users.filter((user) => user.email === email);
+
+  if (filtered_users.length > 0) {
+    // Select the first matching user and update attributes if provided
+    let filtered_user = filtered_users[0];
+
+    // Extract and update DOB if provided
+    if (req.query.DOB) {
+      filtered_user.DOB = req.query.DOB;
+    }
+
+    // Extract and update firstName if provided
+    if (req.query.firstName) {
+      filtered_user.firstName = req.query.firstName;
+    }
+
+    // Extract and update lastName if provided
+    if (req.query.lastName) {
+      filtered_user.lastName = req.query.lastName;
+    }
+
+    // Replace old user entry with updated user
+    users = users.filter((user) => user.email !== email);
+    users.push(filtered_user);
+
+    // Send success message indicating the user has been updated
+    res.send(`User with the email ${email} has been updated.`);
+  } else {
+    // Send error message if no user found
+    res.status(404).send("Unable to find user!");
+  }
 });
 
 
